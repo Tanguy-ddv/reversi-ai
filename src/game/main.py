@@ -19,3 +19,13 @@ def main(size):
             print(f"Player {color} can't play")
         print(f"Player {color} has now {board.count(color)} disks.")
         color = {WHITE : BLACK, BLACK : WHITE}[color]
+    
+    white_count = board.count(WHITE)
+    black_count = board.count(BLACK)
+    if white_count > black_count:
+        print(f"Player {WHITE} won with {white_count} disks")
+    elif black_count > white_count:
+        print(f"Player {BLACK} won with {black_count} disks")
+    else:
+        print("It's a draw !")
+    print("Thanks for playing!")
