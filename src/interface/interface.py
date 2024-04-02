@@ -23,7 +23,9 @@ class MainWindow(tk.Tk):
                 self.tiles[i].append(tk.Button(
                     self,
                     image=self.empty_image,
-                    command=lambda i=i, j=j: self.play(i,j)
+                    command=lambda i=i, j=j: self.play(i,j),
+                    width=90,
+                    height=90
                     ))
                 self.tiles[i][j].grid(column=j, row=i+1)                
             
@@ -37,13 +39,16 @@ class MainWindow(tk.Tk):
         self.display_tiles()
     
     def change_player(self):
-        if not self.board.is_game_over():
+        if not self.board.is_game_over() and (self.board.can_play(WHITE) or self.board.can_play(BLACK)):
             if self.player_playing == WHITE:
                 self.player_playing = BLACK
                 self.player_label.config(text="BLACK to play")
             else:
                 self.player_playing = WHITE
                 self.player_label.config(text="WHITE to play")
+
+            if not self.board.can_play(self.player_playing):
+                self.change_player()
         else:
                 white_count = self.board.count(WHITE)
                 black_count = self.board.count(BLACK)
