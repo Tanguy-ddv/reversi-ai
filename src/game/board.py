@@ -20,6 +20,9 @@ class Board:
 
     def is_on_board(self, x, y):
         return (not x is None) and (not y is None) and ( 0 < x < self.size and 0 < y < self.size)
+
+    def is_game_over(self):
+        return self.count(EMPTY) == 0
     
     def __turn_tiles_matrix(self, x: int, y: int, color: int) -> list[list[bool]]:
         matrix = [[False for _ in range(self.size)] for _ in range(self.size)]
