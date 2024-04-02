@@ -1,6 +1,6 @@
 """The board is a set of sizexsize tiles on which the players put disks."""
 
-from tile import WHITE, EMPTY, BLACK, Tile
+from .tile import WHITE, EMPTY, BLACK, Tile
 
 class Board:
 
@@ -15,8 +15,11 @@ class Board:
     def __str__(self) -> str:
         return "\n".join([str([self.tiles[i][j].get_color() for j in range(self.size)]) for i in range(self.size)])
     
-    def __is_on_board(self, x, y):
-        return 0 < x < self.size and 0 < y < self.size
+    def count(self, color):
+        return sum(sum(1 for j in range(self.size) if self.tiles[i][j].get_color() == color) for i in range(self.size))
+
+    def is_on_board(self, x, y):
+        return (not x is None) and (not y is None) and ( 0 < x < self.size and 0 < y < self.size)
     
     def __turn_tiles_matrix(self, x: int, y: int, color: int) -> list[list[bool]]:
         matrix = [[False for _ in range(self.size)] for _ in range(self.size)]
@@ -25,13 +28,13 @@ class Board:
             for dx, dy in translations: # loop over the directions.
                 i = 1 # the distance to the position (x,y)
                 # Increment i to scan the direction, looking for another disk of the same color
-                while self.__is_on_board(x + dx*i, y + dy*i) and self.tiles[x + dx*i][y + dy*i].get_color() not in [EMPTY, color] :
+                while self.is_on_board(x + dx*i, y + dy*i) and self.tiles[x + dx*i][y + dy*i].get_color() not in [EMPTY, color] :
                     i += 1
                 # If i > 1, we found one (if the stop condition was not the exit of the board but the finding of a disk of the same color.)
                 # In this case, we take every disk on the range and set the return matrix to true.
-                if i > 1 and self.__is_on_board(x + dx*i, y + dy*i) and self.tiles[x + dx*i][y + dy*i].get_color() == color:
+                if i > 1 and self.is_on_board(x + dx*i, y + dy*i) and self.tiles[x + dx*i][y + dy*i].get_color() == color:
 
-                    for k in range(1, i+1):
+                    for k in range(1, i):
                         matrix[x + dx*k][y + dy*k] = True
         return matrix
 
@@ -52,9 +55,14 @@ class Board:
                     self.tiles[i][j].turn_color()
         self.tiles[x][y].set_color(color)
 
+    def can_play(self, color: int) -> bool:
+        matrix = self.verify_playable_tiles(color)
+        return any(any(matrix[i][j] for j in range(self.size)) for i in range(self.size))
+
 if __name__ == '__main__':
     SIZE = 8
     board = Board(SIZE)
     board.put_disk(2, 3, WHITE)
+    board.put_disk(4, 2, WHITE)
     print(board)
-    print(board.verify_playable_tiles(BLACK))
+
